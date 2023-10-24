@@ -1,24 +1,38 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import App from './App';
-import Login from './view/Login';
-import PageNotFound from './view/PageNotFound';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { publicRouter } from '~/routes';
 import reportWebVitals from './reportWebVitals';
+import { DefaultLayout } from './component/Layout';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  // <React.StrictMode>
-  <Router>
-    <Routes>
-      <Route path="/" element={<App />} />
-      <Route path="/login" Component={Login} />
-      <Route path="*" Component={PageNotFound} />
-    </Routes>
-  </Router>
+    <Router>
+        <Routes>
+            {publicRouter.map((route, index) => {
+                const Page = route.component;
+                let Layout = DefaultLayout;
+                if (route.layout) {
+                    Layout = route.layout;
+                } else if (route.layout === null) {
+                    Layout = Fragment;
+                }
 
-  // {/* </React.StrictMode> */}
+                return (
+                    <Route
+                        key={index}
+                        path={route.path}
+                        element={
+                            <Layout>
+                                <Page />
+                            </Layout>
+                        }
+                    />
+                );
+            })}
+        </Routes>
+    </Router>,
 );
 
 // If you want to start measuring performance in your app, pass a function
